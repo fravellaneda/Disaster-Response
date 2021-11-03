@@ -1,5 +1,11 @@
 # Disaster Response 
-Analyze disaster data from Figure Eight to build a model for an API that classifies disaster messages.
+Analyze disaster data from Figure Eight to build a model for an API that classifies disaster messages. The main idea of doing that is to create a model to categorize the messages. In order to that I developed a web application to categorize new messages based on the trainning data before described. The web applications looks like the following image
+
+![web application image](https://github.com/fravellaneda/Disaster-Response/blob/main/capture.PNG)
+
+Also you will find some graphics very important for understand the data training.
+
+This work and this heartfelt motivation would not have been possible without the request of the monitors who reviewed my work at Udacity. To him special thanks.
 
 ### File Description
 
