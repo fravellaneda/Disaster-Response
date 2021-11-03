@@ -4,11 +4,14 @@ from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     """
+    load data and merge in a data Frame
+
     INPUT:
-    messages and categories filepath csv
+    messages.csv
+    categories.csv
     
     OUTPUT:
-    merged df of the messages and categories csv
+    df : merged data frame of the messages and categories csv
     """
     
     # load messages
@@ -46,12 +49,31 @@ def load_data(messages_filepath, categories_filepath):
     return df
 
 def drop_duplicates(df):
+    """
+    drop duplicates of the data frame
+
+    INPUT:
+    df : data frame with duplicates
+    
+    OUTPUT:
+    df : data frame without duplicates
+    """
+
     # drop duplicates
     df.drop_duplicates(inplace=True)
     
     return df
 
 def save_data(df, database_name):
+    """
+    save date frame in a database
+
+    INPUT:
+    df : data frame with duplicates
+    database_name : name of the data base
+    
+    """
+
     # save the clean dataset into an sqlite database
     db_path= "sqlite:///"+database_name+".db"
     engine = create_engine(db_path)

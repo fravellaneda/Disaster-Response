@@ -80,12 +80,12 @@ def index():
             ],
 
             'layout': {
-                'title': 'Top 20 Words Without Stopwords',
+                'title': 'Top 20 Distribution of Words Without Stopwords',
                 'yaxis': {
-                    'title': "Frequency"
+                    'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Top 20 Word Category",
+                    'title': "Top 20 Words",
                     'tickangle': 30,
                     'tickfont': {
                         'size': 10
@@ -148,8 +148,7 @@ def go():
 
 
 def main():
-#    app.run(host='0.0.0.0', port=3001, debug=True)
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 
 if __name__ == "__main__":
