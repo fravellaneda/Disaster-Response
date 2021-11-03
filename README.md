@@ -19,6 +19,7 @@ Analyze disaster data from Figure Eight to build a model for an API that classif
 |   |-- classifier.pkl                          # Saved model file
 |   |-- train_classifier.py                     # Model training script
 |   |-- adicionalFeatures.py                    # TextLengthExtractor tranformer class for sklearn pipeline
+|   |-- count_words.csv                         # csv with information of the mosr common words without stopwords
 |-- README.md                                   
 |-- requirments.txt                             # Used by pip to install required python packages
 ```
