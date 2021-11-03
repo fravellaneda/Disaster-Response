@@ -129,11 +129,11 @@ def build_model():
     
     parameters = {
         'clf__estimator__bootstrap': [True, False],
-        'clf__estimator__max_depth': [10,50, None],
+        'clf__estimator__max_depth': [10,20, None],
         'clf__estimator__max_features': ['auto', 'sqrt'],
         'clf__estimator__min_samples_leaf': [1, 2, 4],
         'clf__estimator__min_samples_split': [2, 3, 4],
-        'clf__estimator__n_estimators': [100,1000]
+        'clf__estimator__n_estimators': [10,15]
     }
     
     # takes a long time running.
