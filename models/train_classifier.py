@@ -1,7 +1,7 @@
 # import libraries
 
 import nltk
-nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
+nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger','stopwords'])
 
 import time
 from datetime import datetime
@@ -171,7 +171,6 @@ def evaluate_model(model, X_test, y_test, labels):
     # find the average of the result and save in the last row
     results.loc[i+1,['precision','recall','f1-score']] = results.mean(numeric_only=True)
     results.loc[i+1,'column']='average'
-    results.to_csv('results.csv',index=False)
     
     return results
 
@@ -231,7 +230,9 @@ def main():
     model.fit(X_train, y_train)
 
     print('Evaluating model...')
+    print('------ Results of the model training -------')
     print(evaluate_model(model, X_test, y_test, labels))
+    print('------------------------------------------------')
 
     print('Saving model...')
     save_model(model, 'classifier')
