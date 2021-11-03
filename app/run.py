@@ -1,37 +1,27 @@
+import pandas as pd
 import json
 import plotly
 import pandas as pd
 
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from adicionalFeatures import TextLengthExtractor
 
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
 from sqlalchemy import create_engine
-
+import joblib
 
 app = Flask(__name__)
 
-def tokenize(text):
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
-
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('disaster_response', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
-
+model = joblib.load("../models/classifier.pkl")
+count_words = pd.read_csv('../models/count_words.csv')
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
@@ -42,15 +32,28 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    top_20_words_names = count_words['words'][0:20].values
+    top_20_words_values = count_words['frequency'][0:20].values
+
+    category = df.iloc[:, 4:]
+    category_series = category[category == 1].count().sort_values(ascending=False)
+    top_20_category_names = category_series.index[:20]
+    top_20_category_count = category_series.values[:20]
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
+    # create visuals
     graphs = [
         {
             'data': [
                 Bar(
                     x=genre_names,
-                    y=genre_counts
+                    y=genre_counts,
+                    text=[x for x in genre_names],
+                    marker=dict(
+                        color='rgb(112,142,161)'
+                    ),
                 )
             ],
 
@@ -61,6 +64,58 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=top_20_words_names,
+                    y=top_20_words_values,
+                    text=[x for x in top_20_words_names],
+                    marker=dict(
+                         color='rgb(112,142,161)'
+                    )
+                )
+            ],
+
+            'layout': {
+                'title': 'Top 20 Words Without Stopwords',
+                'yaxis': {
+                    'title': "Frequency"
+                },
+                'xaxis': {
+                    'title': "Top 20 Word Category",
+                    'tickangle': 30,
+                    'tickfont': {
+                        'size': 10
+                    }
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=top_20_category_names,
+                    y=top_20_category_count,
+                    text=[x for x in top_20_category_names],
+                    marker=dict(
+                         color='rgb(112,142,161)'
+                    )
+                )
+            ],
+
+            'layout': {
+                'title': 'Top 20 Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Top 20 Category",
+                    'tickangle': 30,
+                    'tickfont': {
+                        'size': 10
+                    }
                 }
             }
         }
@@ -93,8 +148,9 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3001, debug=True)
+#    app.run(host='0.0.0.0', port=3001, debug=True)
+    app.run(debug=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

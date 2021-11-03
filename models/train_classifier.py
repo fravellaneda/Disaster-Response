@@ -8,6 +8,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import re
+from tqdm import tqdm
 
 from sqlalchemy import create_engine
 import sqlite3
@@ -19,6 +20,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from adicionalFeatures import TextLengthExtractor
+from collections import Counter
 
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -169,6 +171,7 @@ def evaluate_model(model, X_test, y_test, labels):
     # find the average of the result and save in the last row
     results.loc[i+1,['precision','recall','f1-score']] = results.mean(numeric_only=True)
     results.loc[i+1,'column']='average'
+    results.to_csv('results.csv',index=False)
     
     return results
 
@@ -184,6 +187,36 @@ def save_model(model, model_name):
     none.
     """
     joblib.dump(model, model_name+'.pkl', compress = 1)
+
+def words_without_stopwords(text_list):
+    
+    """
+    create a long text with all words without stop words.
+    
+    INPUT:
+    text_list: list of texts
+    
+    OUTPUT:
+    all_text: list of all words
+    """
+    
+    # text transformation
+
+    stop_words = stopwords.words("english")
+    all_words=[]
+
+    for text in tqdm(text_list):
+        text = text.lower()
+        text = re.sub(r"[^a-zA-Z0-9]"," ",text)
+        text = text.strip()
+    
+        tokens = word_tokenize(text)
+
+        clean_tokens = [word for word in tokens if word not in stop_words]
+        for word in clean_tokens:
+            all_words.append(word)
+
+    return all_words
     
 def main():
     
@@ -202,6 +235,13 @@ def main():
 
     print('Saving model...')
     save_model(model, 'classifier')
+
+    print('Calculing the most common words...')
+    all_words = Counter(words_without_stopwords(list(X)))
+    count_words = pd.DataFrame(list(dict(all_words.most_common(100)).keys()),columns=['words'])
+    count_words['frequency'] = list(dict(all_words.most_common(100)).values())
+    print('Saving the most common words...')
+    count_words.to_csv('count_words.csv',index=False)
 
     print('Done!')
 
