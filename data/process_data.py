@@ -45,6 +45,8 @@ def load_data(messages_filepath, categories_filepath):
     df.drop('categories', axis=1,inplace=True,errors='ignore')
     # replace categories column in df with new category columns
     df = df.merge(categories,on='id')
+    df = df[df['related']<=1]
+    df.reset_index(drop=True,inplace=True)
     
     return df
 
